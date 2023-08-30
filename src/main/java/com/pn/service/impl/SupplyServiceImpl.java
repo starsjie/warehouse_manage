@@ -1,0 +1,34 @@
+package com.pn.service.impl;
+
+import com.pn.entity.Supply;
+import com.pn.mapper.SupplyMapper;
+import com.pn.service.SupplyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * @author ljj
+ * @create 2023/8/26 9:08
+ */
+//指定缓存的名称即键的前缀,一般是@CacheConfig标注的类的全类名
+@CacheConfig(cacheNames = "com.pn.service.impl.SupplyServiceImpl")
+@Service
+public class SupplyServiceImpl implements SupplyService {
+
+    @Autowired
+    private SupplyMapper supplyMapper;
+
+    /*
+         查询所有供应商的业务方法
+        */
+    //对查询到的所有供应商进行缓存,缓存到redis的键为all:supply
+    @Cacheable(key = "'all:supply'")
+    @Override
+    public List<Supply> queryAllSupply() {
+        return supplyMapper.findAllSupply();
+    }
+}
